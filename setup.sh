@@ -91,8 +91,8 @@ sudo /etc/init.d/samba restart
 #===================#
 sudo apt-get install transmission-daemon -y -qq
 sudo killall transmission-daemon
-cp /var/lib/transmission-daemon/info/settings.json /var/lib/transmission-daemon/info/settings.json.old
-mkdir -p $naspwd/BT/Bt_inprogress
+sudo cp /var/lib/transmission-daemon/info/settings.json /var/lib/transmission-daemon/info/settings.json.old
+sudo mkdir -p $naspwd/BT/Bt_inprogress
 read -p "transmission登入帳號: " rpcname
 read -p "transmission登入密碼: " rpcpasswd
 # 細部設定 https://trac.transmissionbt.com/wiki/EditConfigFiles
@@ -182,7 +182,7 @@ sudo chmod -R 775 $naspwd/BT
 sudo modprobe bcm2708_wdog
 sudo echo "bcm2708_wdog" >> /etc/modules
 sudo apt-get install watchdog chkconfig
-chkconfig watchdog on
+sudo chkconfig watchdog on
 sudo /etc/init.d/watchdog start
 
 #=============#
