@@ -9,6 +9,17 @@ else
 	echo "Error input"
 fi
 
+echo "顯示硬碟分割表，尋找你的外接裝置"
+read -p "輸入你的硬碟位置(ex:/dev/sda1): " diskpwd
+read -p "是否需要格式化?(y/n)" yn
+read -p "選擇格式化格式(1:NTFS  2.Ext4 3.回上一步)請輸入1 or 2 or 3: " mkfstype
+read -p "你的NAS要建在哪?(請輸入絕對位置ex:/media/NAS)" naspwd
+read -p "設定samba的目錄(請輸入絕對位置ex:/media/NAS):" sambapwd
+read -p "samba登入帳號: " smbname
+read -p "samba登入密碼: " smbpasswd
+read -p "transmission登入帳號: " rpcname
+read -p "transmission登入密碼: " rpcpasswd
+
 echo "update & upgrade ........."
 sleep 1
 sudo apt-get update -qq
@@ -18,17 +29,17 @@ sudo apt-get upgrade -y -qq
 # Adding USB Storage #
 #====================#
 sudo fdisk -l
-echo "顯示硬碟分割表，尋找你的外接裝置"
-read -p "輸入你的硬碟位置(ex:/dev/sda1): " diskpwd
+#echo "顯示硬碟分割表，尋找你的外接裝置"
+#read -p "輸入你的硬碟位置(ex:/dev/sda1): " diskpwd
 ynflag=0
 mkfstypeflag=0
 while [ "${ynflag}" != "1" ]
 do
-	read -p "是否需要格式化?(y/n)" yn
+#	read -p "是否需要格式化?(y/n)" yn
 	if [ "${yn}" == "Y" ] || [ "${yn}" == "y" ]; then
 		while [ "${mkfstypeflag}" != "1" ]
 		do
-			read -p "選擇格式化格式(1:NTFS  2.Ext4 3.回上一步)請輸入1 or 2 or 3: " mkfstype
+#			read -p "選擇格式化格式(1:NTFS  2.Ext4 3.回上一步)請輸入1 or 2 or 3: " mkfstype
 			if [ "${mkfstype}" == "1" ];then
 				mkfstypeflag=1
 				sudo apt-get install ntfs-3g -y -qq
@@ -53,7 +64,7 @@ do
 done
 
 # 建立NAS目錄
-read -p "你的NAS要建在哪?(請輸入絕對位置ex:/media/NAS)" naspwd
+#read -p "你的NAS要建在哪?(請輸入絕對位置ex:/media/NAS)" naspwd
 sudo mkdir -p $naspwd
 # 修改目錄擁有者
 sudo chown -R pi:pi $naspwd
@@ -81,14 +92,14 @@ fi
 echo "安裝samba"
 sudo apt-get install samba samba-common-bin -y -qq
 # 備份設定檔
-read -p "設定samba的目錄(請輸入絕對位置ex:/media/NAS):" sambapwd
+#read -p "設定samba的目錄(請輸入絕對位置ex:/media/NAS):" sambapwd
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.old
 # 設定samba設定檔
 sudo cat <<EOF >> /etc/samba/smb.conf
 [PiNas]
 comment = $sambapwd
 path = $naspwd
-valid users = pi
+valid users = $smbname
 browseable = yes
 create mask = 0660
 directory mask = 0771
@@ -98,6 +109,10 @@ locking = no
 EOF
 echo "samba restart"
 sudo /etc/init.d/samba restart
+sudo smbpasswd -a pi << EOF
+$smbpasswd
+$smbpasswd
+EOF
 
 #===================#
 # 安裝 Transmission #
@@ -106,8 +121,8 @@ sudo apt-get install transmission-daemon -y -qq
 sudo killall transmission-daemon
 sudo cp /var/lib/transmission-daemon/info/settings.json /var/lib/transmission-daemon/info/settings.json.old
 sudo mkdir -p $naspwd/BT/Bt_inprogress
-read -p "transmission登入帳號: " rpcname
-read -p "transmission登入密碼: " rpcpasswd
+#read -p "transmission登入帳號: " rpcname
+#read -p "transmission登入密碼: " rpcpasswd
 # 細部設定 https://trac.transmissionbt.com/wiki/EditConfigFiles
 sudo cat <<EOF > /var/lib/transmission-daemon/info/settings.json
 {
@@ -194,6 +209,10 @@ sudo chmod -R 775 $naspwd/BT
 #==============#
 sudo modprobe bcm2708_wdog
 sudo echo "bcm2708_wdog" >> /etc/modules
+sudo cat <<EOF >> /etc/watchdog.conf
+max-load-1              = 24
+watchdog-device = /dev/watchdog
+EOF
 sudo apt-get install watchdog chkconfig
 sudo chkconfig watchdog on
 sudo /etc/init.d/watchdog start
