@@ -1,7 +1,7 @@
 #!/bin/bash
 read -p "是否已先sudo raspi-config 做 Expand Filesystem (y/n)" expand
 if [ "${expand}" == "Y" ] || [ "${expand}" == "y" ]; then
-	continue 
+	echo "開始安裝"
 elif [ "${expand}" == "N" ] || [ "${expand}" == "n" ]; then
 	echo "請先Expand Filesystem以避免安裝空間不足"
 	exit 0 
