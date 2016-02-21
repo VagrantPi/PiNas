@@ -1,5 +1,5 @@
 # PiNas
-===================================
+
 ### 安裝提醒
 * OS : raspbian-jessie
 * 須先到sudo raspi-config 做 Expand Filesystem 以避免安裝空間不足
