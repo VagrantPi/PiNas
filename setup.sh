@@ -1,6 +1,16 @@
 #!/bin/bash
+read -p "是否已先sudo raspi-config 做 expand-rootfs (y/n)" expand
+if [ "${expand}" == "Y" ] || [ "${expand}" == "y" ]; then
+	continue 
+elif [ "${expand}" == "N" ] || [ "${expand}" == "n" ]; then
+	echo "請先expand-rootfs以避免安裝空間不足"
+	exit 0 
+else
+	echo "Error input"
+fi
 
-echo "起手式update & upgrade ........."
+echo "update & upgrade ........."
+sleep(1)
 sudo apt-get update -qq
 sudo apt-get upgrade -y -qq
 
@@ -51,6 +61,7 @@ sudo chown -R pi:pi $naspwd
 # 掛載
 echo "fstab 的device設定使用磁碟裝置檔名(ex:/dev/sda1)"
 echo "建議自行改成UUID"
+sleep(2)
 # 可使用 ls -l /dev/disk/by-uuid/
 #     或 sudo blkid
 # 來查看UUID
@@ -70,13 +81,15 @@ fi
 echo "安裝samba"
 sudo apt-get install samba samba-common-bin -y -qq
 # 備份設定檔
+read -p "設定samba的目錄(請輸入絕對位置ex:/media/NAS):" sambapwd
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.old
 # 設定samba設定檔
 sudo cat <<EOF >> /etc/samba/smb.conf
-[public]
-comment = Public Storage
+[PiNas]
+comment = $sambapwd
 path = $naspwd
 valid users = pi
+browseable = yes
 create mask = 0660
 directory mask = 0771
 read only = no
