@@ -1,9 +1,9 @@
 #!/bin/bash
-read -p "是否已先sudo raspi-config 做 expand-rootfs (y/n)" expand
+read -p "是否已先sudo raspi-config 做 Expand Filesystem (y/n)" expand
 if [ "${expand}" == "Y" ] || [ "${expand}" == "y" ]; then
 	continue 
 elif [ "${expand}" == "N" ] || [ "${expand}" == "n" ]; then
-	echo "請先expand-rootfs以避免安裝空間不足"
+	echo "請先Expand Filesystem以避免安裝空間不足"
 	exit 0 
 else
 	echo "Error input"
