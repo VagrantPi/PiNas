@@ -10,7 +10,7 @@ else
 fi
 
 echo "update & upgrade ........."
-sleep(1)
+sleep 1
 sudo apt-get update -qq
 sudo apt-get upgrade -y -qq
 
@@ -61,7 +61,7 @@ sudo chown -R pi:pi $naspwd
 # 掛載
 echo "fstab 的device設定使用磁碟裝置檔名(ex:/dev/sda1)"
 echo "建議自行改成UUID"
-sleep(2)
+sleep 2
 # 可使用 ls -l /dev/disk/by-uuid/
 #     或 sudo blkid
 # 來查看UUID
