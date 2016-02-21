@@ -8,7 +8,7 @@ elif [ "${expand}" == "N" ] || [ "${expand}" == "n" ]; then
 else
 	echo "Error input"
 fi
-
+sudo fdisk -l
 echo "顯示硬碟分割表，尋找你的外接裝置"
 read -p "輸入你的硬碟位置(ex:/dev/sda1): " diskpwd
 read -p "是否需要格式化?(y/n)" yn
@@ -19,16 +19,17 @@ read -p "samba登入帳號: " smbname
 read -p "samba登入密碼: " smbpasswd
 read -p "transmission登入帳號: " rpcname
 read -p "transmission登入密碼: " rpcpasswd
+echo "開始安裝....    需費時5分UP _(:3」∠)_"
 
 echo "update & upgrade ........."
 sleep 1
-sudo apt-get update -qq
-sudo apt-get upgrade -y -qq
+sudo apt-get update 
+sudo apt-get upgrade -y 
 
 #====================#
 # Adding USB Storage #
 #====================#
-sudo fdisk -l
+#sudo fdisk -l
 #echo "顯示硬碟分割表，尋找你的外接裝置"
 #read -p "輸入你的硬碟位置(ex:/dev/sda1): " diskpwd
 ynflag=0
