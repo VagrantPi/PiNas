@@ -1,7 +1,6 @@
 #!/bin/bash
 read -p "是否已先sudo raspi-config 做 Expand Filesystem (y/n)" expand
 if [ "${expand}" == "Y" ] || [ "${expand}" == "y" ]; then
-	echo "開始安裝"
 elif [ "${expand}" == "N" ] || [ "${expand}" == "n" ]; then
 	echo "請先Expand Filesystem以避免安裝空間不足"
 	exit 0 
@@ -17,8 +16,14 @@ read -p "你的NAS要建在哪?(請輸入絕對位置ex:/media/NAS)" naspwd
 read -p "設定samba的目錄(請輸入絕對位置ex:/media/NAS):" sambapwd
 read -p "samba登入帳號: " smbname
 read -p "samba登入密碼: " smbpasswd
-read -p "transmission登入帳號: " rpcname
-read -p "transmission登入密碼: " rpcpasswd
+read -p "是否安裝transmission?(y/n) " transmissionyn
+if [ "${transmissionyn}" == "Y" ] || [ "${transmissionyn}" == "y" ]; then
+	read -p "transmission登入帳號: " rpcname
+	read -p "transmission登入密碼: " rpcpasswd
+elif [ "${transmissionyn}" == "N" ] || [ "${transmissionyn}" == "n" ]; then
+else
+        echo "Error input"
+fi
 echo "開始安裝....    需費時5分UP _(:3」∠)_"
 
 echo "update & upgrade ........."
@@ -48,7 +53,9 @@ do
 				ynflag=1
 			elif [ "${mkfstype}" == "2" ];then
 				mkfstypeflag=1
-				sudo mkfs -t ext4 $diskpwd
+				sudo mkfs -t ext4 $diskpwd << EOF
+y
+EOF
 				ynflag=1
 			elif [ "${mkfstype}" == "3" ];then
 				break
@@ -96,9 +103,9 @@ sudo apt-get install samba samba-common-bin -y -qq
 #read -p "設定samba的目錄(請輸入絕對位置ex:/media/NAS):" sambapwd
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.old
 # 設定samba設定檔
-sudo cat <<EOF >> /etc/samba/smb.conf
+sudo tee -a /etc/samba/smb.conf <<EOF
 [PiNas]
-comment = $sambapwd
+comment = PiNas
 path = $naspwd
 valid users = $smbname
 browseable = yes
@@ -118,6 +125,7 @@ EOF
 #===================#
 # 安裝 Transmission #
 #===================#
+if [ "${transmissionyn}" == "Y" ] || [ "${transmissionyn}" == "y" ]; then
 sudo apt-get install transmission-daemon -y -qq
 sudo killall transmission-daemon
 sudo cp /var/lib/transmission-daemon/info/settings.json /var/lib/transmission-daemon/info/settings.json.old
@@ -200,11 +208,11 @@ sudo cat <<EOF > /var/lib/transmission-daemon/info/settings.json
 EOF
 sudo service transmission-daemon reload
 sudo service transmission-daemon restart
-sudo service transmission-daemon status
+#sudo service transmission-daemon status
 sudo insserv transmission-daemon                #update-rc.d servicename defaults
 sudo usermod -a -G pi debian-transmission
 sudo chmod -R 775 $naspwd/BT
-
+fi
 #==============#
 # 安裝watchdog #
 #==============#
@@ -214,10 +222,20 @@ sudo cat <<EOF >> /etc/watchdog.conf
 max-load-1              = 24
 watchdog-device = /dev/watchdog
 EOF
-sudo apt-get install watchdog chkconfig
+sudo apt-get install watchdog chkconfig -y
 sudo chkconfig watchdog on
 sudo /etc/init.d/watchdog start
 
+if [ "${transmissionyn}" == "Y" ] || [ "${transmissionyn}" == "y" ]; then
+sudo service transmission-daemon status
+echo "如果transmission-daemon 狀態為failed"
+echo "建議重新安裝"
+echo "http://wwssllabcd.github.io/blog/2013/04/22/how-to-setup-transmission-deamon-in-raspberry-pi/"
+fi
+
+echo ""
+
+echo "安裝結束 Have a nice day (“￣▽￣)-o█"
 #=============#
 #  Reference  #
 #==============
