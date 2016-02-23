@@ -53,9 +53,7 @@ do
 				ynflag=1
 			elif [ "${mkfstype}" == "2" ];then
 				mkfstypeflag=1
-				sudo mkfs -t ext4 $diskpwd << EOF
-y
-EOF
+				sudo echo "y" | sudo mkfs -t ext4 $diskpwd
 				ynflag=1
 			elif [ "${mkfstype}" == "3" ];then
 				break
@@ -117,10 +115,8 @@ locking = no
 EOF
 echo "samba restart"
 sudo /etc/init.d/samba restart
-sudo smbpasswd -a pi << EOF
-$smbpasswd
-$smbpasswd
-EOF
+sudo echo "ap88515q ap88515q" | sudo smbpasswd -a pi
+
 
 #===================#
 # 安裝 Transmission #
@@ -133,7 +129,7 @@ sudo mkdir -p $naspwd/BT/Bt_inprogress
 #read -p "transmission登入帳號: " rpcname
 #read -p "transmission登入密碼: " rpcpasswd
 # 細部設定 https://trac.transmissionbt.com/wiki/EditConfigFiles
-sudo cat <<EOF > /var/lib/transmission-daemon/info/settings.json
+sudo tee -a /var/lib/transmission-daemon/info/settings.json <<EOF
 {
     "alt-speed-down": 50,
     "alt-speed-enabled": false,
@@ -218,7 +214,7 @@ fi
 #==============#
 sudo modprobe bcm2708_wdog
 sudo echo "bcm2708_wdog" >> /etc/modules
-sudo cat <<EOF >> /etc/watchdog.conf
+sudo tee -a /etc/watchdog.conf <<EOF
 max-load-1              = 24
 watchdog-device = /dev/watchdog
 EOF
