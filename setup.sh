@@ -53,7 +53,7 @@ do
 				ynflag=1
 			elif [ "${mkfstype}" == "2" ];then
 				mkfstypeflag=1
-				sudo echo "y" | sudo mkfs -t ext4 $diskpwd
+				sudo echo "y" | sudo mkfs -t ext4 $diskpwd                   #無法自動回答
 				ynflag=1
 			elif [ "${mkfstype}" == "3" ];then
 				break
@@ -83,12 +83,17 @@ sleep 2
 #     或 sudo blkid
 # 來查看UUID
 sudo mount $diskpwd $naspwd
-if [ "${mkfstype}" == "1" ];then
-	sudo echo "$diskpwd       $naspwd      ntfs    defaults          0       0" >>/etc/fstab
+if [ "${mkfstype}" == "1" ];then			#下面這行還未測試
+	sudo tee -a /etc/fstab<<EOF
+	$diskpwd       $naspwd      ntfs    defaults          0       0
+EOF								
 	sudo mount -t ntfs-3g $diskpwd $naspwd
 fi
 if [ "${mkfstype}" == "2" ];then
-	sudo echo "$diskpwd       $naspwd      ext4    defaults          0       0" >>/etc/fstab
+	#sudo echo "$diskpwd       $naspwd      ext4    defaults          0       0" >>/etc/fstab
+	sudo tee -a /etc/fstab<<EOF
+	$diskpwd       $naspwd      ext4    defaults          0       0
+EOF
 	sudo mount -t ext4 $diskpwd $naspwd
 fi
 
@@ -115,7 +120,7 @@ locking = no
 EOF
 echo "samba restart"
 sudo /etc/init.d/samba restart
-sudo echo "ap88515q ap88515q" | sudo smbpasswd -a pi
+sudo echo "$smbpasswd $smbpasswd" | sudo smbpasswd -a $smbname                   #無法自動回答 
 
 
 #===================#
@@ -213,7 +218,10 @@ fi
 # 安裝watchdog #
 #==============#
 sudo modprobe bcm2708_wdog
-sudo echo "bcm2708_wdog" >> /etc/modules
+	sudo tee -a /etc/modules <<EOF
+bcm2708_wdog
+EOF
+
 sudo tee -a /etc/watchdog.conf <<EOF
 max-load-1              = 24
 watchdog-device = /dev/watchdog
@@ -226,12 +234,12 @@ if [ "${transmissionyn}" == "Y" ] || [ "${transmissionyn}" == "y" ]; then
 sudo service transmission-daemon status
 echo "如果transmission-daemon 狀態為failed"
 echo "建議重新安裝"
-echo "http://wwssllabcd.github.io/blog/2013/04/22/how-to-setup-transmission-deamon-in-raspberry-pi/"
+echo "參考資料 : http://wwssllabcd.github.io/blog/2013/04/22/how-to-setup-transmission-deamon-in-raspberry-pi/"
 fi
 
 echo ""
 
-echo "安裝結束 Have a nice day (“￣▽￣)-o█"
+echo "安裝結束 Have fun (“￣▽￣)-o█"
 #=============#
 #  Reference  #
 #==============
