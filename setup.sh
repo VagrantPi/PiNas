@@ -224,7 +224,7 @@ sudo service transmission-daemon reload
 sudo service transmission-daemon restart
 #sudo service transmission-daemon status
 sudo insserv transmission-daemon                #update-rc.d servicename defaults
-sudo usermod -a -G pi debian-transmission
+sudo usermod -a -G $rpcname debian-transmission
 sudo chmod -R 775 $naspwd/BT
 fi
 #==============#
