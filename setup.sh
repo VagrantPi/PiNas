@@ -112,7 +112,7 @@ sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.old
 sudo tee -a /etc/samba/smb.conf <<EOF
 [PiNas]
 comment = PiNas
-path = $naspwd
+path = $smbpasswd
 valid users = $smbname
 browseable = yes
 create mask = 0660
@@ -239,11 +239,15 @@ sudo /etc/init.d/watchdog start
 if [ "${transmissionyn}" == "Y" ] || [ "${transmissionyn}" == "y" ]; then
 sudo service transmission-daemon status
 echo "如果transmission-daemon 狀態為failed"
-echo "建議重新安裝"
-echo "參考資料 : http://wwssllabcd.github.io/blog/2013/04/22/how-to-setup-transmission-deamon-in-raspberry-pi/"
+echo "可能是設定檔出問題，可以用下面指令復原就設定檔"
+echo "sudo cp /var/lib/transmission-daemon/info/settings.json.old /var/lib/transmission-daemon/info/settings.json"
+echo "sudo service transmission-daemon restart"
+echo "如果依然不行，請重新新安裝"
+echo "參考資料：http://wwssllabcd.github.io/blog/2013/04/22/how-to-setup-transmission-deamon-in-raspberry-pi/"
+echo "設定檔參考：https://trac.transmissionbt.com/wiki/EditConfigFiles"
 fi
 
-echo ""
+
 
 echo "安裝結束 Have fun (“￣▽￣)-o█"
 #=============#
