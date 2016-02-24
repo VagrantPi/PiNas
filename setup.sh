@@ -69,11 +69,14 @@ do
 	fi
 done
 
-# 建立NAS目錄
+# 建立NAS,samba目錄
 #read -p "你的NAS要建在哪?(請輸入絕對位置ex:/media/NAS)" naspwd
 sudo mkdir -p $naspwd
+sudo mkdir -p $sambapwd
 # 修改目錄擁有者
 sudo chown -R pi:pi $naspwd
+sudo chown -R pi:pi $sambapwd
+
 
 # 掛載
 echo "fstab 的device設定使用磁碟裝置檔名(ex:/dev/sda1)"
@@ -84,17 +87,17 @@ sleep 2
 # 來查看UUID
 sudo mount $diskpwd $naspwd
 if [ "${mkfstype}" == "1" ];then			#下面這行還未測試
+	sudo mount -t ntfs-3g $diskpwd $naspwd
 	sudo tee -a /etc/fstab<<EOF
 	$diskpwd       $naspwd      ntfs    defaults          0       0
 EOF								
-	sudo mount -t ntfs-3g $diskpwd $naspwd
 fi
 if [ "${mkfstype}" == "2" ];then
 	#sudo echo "$diskpwd       $naspwd      ext4    defaults          0       0" >>/etc/fstab
+	sudo mount -t ext4 $diskpwd $naspwd
 	sudo tee -a /etc/fstab<<EOF
 	$diskpwd       $naspwd      ext4    defaults          0       0
 EOF
-	sudo mount -t ext4 $diskpwd $naspwd
 fi
 
 #===========#
@@ -120,8 +123,11 @@ locking = no
 EOF
 echo "samba restart"
 sudo /etc/init.d/samba restart
-sudo echo "$smbpasswd $smbpasswd" | sudo smbpasswd -a $smbname                   #無法自動回答 
-
+#sudo echo "$smbpasswd $smbpasswd" | sudo smbpasswd -a $smbname                   #無法自動回答 
+echo "$smbpasswd" >> pass.tmp
+echo "$smbpasswd" >> pass.tmp
+sudo smbpasswd -a $smbname < pass.tmp
+sudo rm -f pass.tmp
 
 #===================#
 # 安裝 Transmission #
@@ -134,7 +140,7 @@ sudo mkdir -p $naspwd/BT/Bt_inprogress
 #read -p "transmission登入帳號: " rpcname
 #read -p "transmission登入密碼: " rpcpasswd
 # 細部設定 https://trac.transmissionbt.com/wiki/EditConfigFiles
-sudo tee -a /var/lib/transmission-daemon/info/settings.json <<EOF
+sudo bash -c 'cat > /var/lib/transmission-daemon/info/settings.json' <<EOF
 {
     "alt-speed-down": 50,
     "alt-speed-enabled": false,
@@ -178,7 +184,7 @@ sudo tee -a /var/lib/transmission-daemon/info/settings.json <<EOF
     "queue-stalled-enabled": true,
     "queue-stalled-minutes": 30,
     "ratio-limit": 2,
-    "ratio-limit-enabled": false,u
+    "ratio-limit-enabled": false,
     "rename-partial-files": true,
     "rpc-authentication-required": true,
     "rpc-bind-address": "0.0.0.0",
