@@ -1,7 +1,10 @@
 #!/bin/bash
 read -p "是否已先sudo raspi-config 做 Expand Filesystem (y/n)" expand
 if [ "${expand}" == "Y" ] || [ "${expand}" == "y" ]; then
-elif [ "${expand}" == "N" ] || [ "${expand}" == "n" ]; then
+	x=0	# 沒東西出現error @@
+fi
+#elif [ "${expand}" == "N" ] || [ "${expand}" == "n" ]; then		elfi 會出現 syntax error
+if [ "${expand}" == "N" ] || [ "${expand}" == "n" ]; then
 	echo "請先Expand Filesystem以避免安裝空間不足"
 	exit 0 
 else
@@ -20,7 +23,9 @@ read -p "是否安裝transmission?(y/n) " transmissionyn
 if [ "${transmissionyn}" == "Y" ] || [ "${transmissionyn}" == "y" ]; then
 	read -p "transmission登入帳號: " rpcname
 	read -p "transmission登入密碼: " rpcpasswd
-elif [ "${transmissionyn}" == "N" ] || [ "${transmissionyn}" == "n" ]; then
+fi
+if [ "${transmissionyn}" == "N" ] || [ "${transmissionyn}" == "n" ]; then
+	x=0
 else
         echo "Error input"
 fi
@@ -51,18 +56,20 @@ do
 				sudo apt-get install ntfs-3g -y -qq
 				sudo mkfs.ntfs $diskpwd -f -I
 				ynflag=1
-			elif [ "${mkfstype}" == "2" ];then
+			fi
+			if [ "${mkfstype}" == "2" ];then
 				mkfstypeflag=1
 				sudo echo "y" | sudo mkfs -t ext4 $diskpwd                   #無法自動回答
 				ynflag=1
-			elif [ "${mkfstype}" == "3" ];then
+			fi
+			if [ "${mkfstype}" == "3" ];then
 				break
 			else
 				echo "Error input"
 			fi
 		done
-
-	elif [ "${yn}" == "N" ] || [ "${yn}" == "n" ]; then
+	fi
+	if [ "${yn}" == "N" ] || [ "${yn}" == "n" ]; then
 		ynflag=1
 	else
 		echo "Error input"
