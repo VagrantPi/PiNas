@@ -13,13 +13,13 @@ fi
 sudo fdisk -l
 echo "顯示硬碟分割表，尋找你的外接裝置"
 read -p "輸入你的硬碟位置(ex:/dev/sda1): " diskpwd
-read -p "是否需要格式化?(y/n)" yn
+read -p "是否需要格式化?(y/n): " yn
 read -p "選擇格式化格式(1:NTFS  2.Ext4 3.回上一步)請輸入1 or 2 or 3: " mkfstype
-read -p "你的NAS要建在哪?(請輸入絕對位置ex:/media/NAS)" naspwd
-read -p "設定samba的目錄(請輸入絕對位置ex:/media/NAS):" sambapwd
+read -p "你的NAS要建在哪?(請輸入絕對位置ex:/media/NAS): " naspwd
+read -p "設定samba的目錄(請輸入絕對位置ex:/media/NAS): " sambapwd
 read -p "samba登入帳號: " smbname
 read -p "samba登入密碼: " smbpasswd
-read -p "是否安裝transmission?(y/n) " transmissionyn
+read -p "是否安裝transmission?(y/n): " transmissionyn
 if [ "${transmissionyn}" == "Y" ] || [ "${transmissionyn}" == "y" ]; then
 	read -p "transmission登入帳號: " rpcname
 	read -p "transmission登入密碼: " rpcpasswd
