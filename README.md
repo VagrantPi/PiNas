@@ -11,3 +11,6 @@
 ### 複製下列指令到terminal
 	wget https://raw.githubusercontent.com/VagrantPi/PiNas/master/setup.sh
 	sudo /bin/bash setup.sh
+
+![github](https://github.com/VagrantPi/PiNas/blob/master/picture/1.png)
+![github](https://github.com/VagrantPi/PiNas/blob/master/picture/2.png)
