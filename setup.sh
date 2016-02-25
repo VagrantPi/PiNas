@@ -29,7 +29,7 @@ if [ "${transmissionyn}" == "N" ] || [ "${transmissionyn}" == "n" ]; then
 else
         echo "Error input"
 fi
-echo "開始安裝....    需費時5分UP _(:3」∠)_"
+echo "開始安裝....    需費時40分UP _(:3」∠)_"
 
 echo "update & upgrade ........."
 sleep 1
