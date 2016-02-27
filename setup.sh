@@ -117,7 +117,7 @@ sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.old
 sudo tee -a /etc/samba/smb.conf <<EOF
 [PiNas]
 comment = PiNas
-path = $smbpasswd
+path = $sambapwd
 valid users = $smbname
 browseable = yes
 create mask = 0660
