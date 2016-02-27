@@ -8,7 +8,6 @@ elif [ "${expand}" == "N" ] || [ "${expand}" == "n" ]; then
 else
 	echo "Error input"
 fi
-exit 0
 sudo fdisk -l
 echo "顯示硬碟分割表，尋找你的外接裝置"
 read -p "輸入你的硬碟位置(ex:/dev/sda1): " diskpwd
